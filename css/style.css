@@ -3,3 +3,18 @@
   padding: 0;
   box-sizing: border-box;
 }
+
+:root {
+  --numCols: 4;
+}
+
+.jt-row {
+  display: flex;
+  width: 100%;
+}
+
+.jt-cell {
+  box-sizing: border-box;
+  width: calc(100% / var(--numCols));
+  border: 1px solid black;
+}
