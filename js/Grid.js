@@ -21,7 +21,7 @@ form.addEventListener("submit", function(event) {
       const cell = document.createElement('div');
       cell.classList.add('jt-cell');
       cell.style.width = `${cellWidth}%`;
-      cell.style.paddingBottom = `${cellWidth}%`;
+      cell.style.paddingBottom = `${cellWidth}%`; // Imposta l'altezza in base alla larghezza
       row.appendChild(cell);
     }
 

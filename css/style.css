@@ -8,6 +8,10 @@
   --numCols: 4;
 }
 
+.grid-container {
+  heigth: 50px;
+}
+
 .jt-row {
   display: flex;
   width: 100%;
