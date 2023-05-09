@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html>
   <head>
-    
+
     <meta charset="UTF-8">
     <title>Mars Rover Kata</title>
+
+    <!-- CSS -->
     <link rel="stylesheet" href="css/style.css">
 
      <!-- BOOTSTRAP -->
@@ -27,21 +29,29 @@
 
     <h1>Mars Rover</h1>
 
-    <p>Enter the parameters of the map:</p>
+    
+    <form class="row g-3 mx-4">
+      <p>Enter the parameters for the map:</p>
 
-    <form>
-      <label for="numCols">Column number:</label>
-      <input type="number" id="numCols" name="numCols" min="1" max="20" required>
+        <div class="col">
+          <label for="numCols" class="mb-1">Column number:</label>
+          <input type="number" class="form-control" id="numCols" name="numCols" min="1" max="20" required>
+        </div>
+
+        <div class="col">
+          <label for="numRows" class="mb-1">Row number:</label>
+          <input type="number" class="form-control" id="numRows" name="numRows" min="1" max="20" required>
+        </div>
+
+      <div class="col-12">
+        <button type="submit" class="btn btn-primary">Create grid</button>
+      </div>
       
-      <label for="numRows">Row number:</label>
-      <input type="number" id="numRows" name="numRows" min="1" max="20" required>
-      
-      <button type="submit">Create grid</button>
     </form>
     
     <div class="grid-container"></div>
 
-   
+    <!-- JS -->
     <script src="js/Grid.js"></script>
   </body>
 </html>
