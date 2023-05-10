@@ -53,9 +53,11 @@ form.addEventListener("submit", function(event) {
 
     gridContainer.prepend(row);
   }
+  placeRover(gridContainer);
 
-  const roverCell = gridContainer.querySelector('.jt-row:last-child .jt-cell:first-child');
-  const roverIcon = document.createElement('i');
-  roverIcon.classList.add('fa-regular', 'fa-square-caret-up', 'rover');
-  roverCell.appendChild(roverIcon);
 });
+
+// const roverCell = gridContainer.querySelector('.jt-row:last-child .jt-cell:first-child');
+// const roverIcon = document.createElement('i');
+// roverIcon.classList.add('fa-regular', 'fa-square-caret-up', 'rover');
+// roverCell.appendChild(roverIcon);
