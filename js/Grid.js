@@ -19,6 +19,11 @@ form.addEventListener("submit", function(event) {
     const obstacleX = parseInt(prompt("Inserisci la posizione X dell'ostacolo " + (i + 1)));
     const obstacleY = parseInt(prompt("Inserisci la posizione Y dell'ostacolo " + (i + 1)));
 
+    if (obstacleX === 0 && obstacleY === 0) {
+      alert("Posizione non valida. L'ostacolo non può essere posizionato qui perché è la posizione di partenza del rover.");
+      return;
+    }
+
     obstacles.push({ x: obstacleX, y: obstacleY });
   }
 
@@ -38,7 +43,7 @@ form.addEventListener("submit", function(event) {
       cell.style.width = `${cellWidth}px`;
       cell.style.height = `${cellWidth}px`;
 
-      const isObstacle = obstacles.some(obstacle => obstacle.x === j && obstacle.y === (numRows - 1 - i));
+      const isObstacle = obstacles.some(obstacle => obstacle.x === j && obstacle.y === i);
       if (isObstacle) {
         cell.classList.add('obstacle');
       }
@@ -46,6 +51,9 @@ form.addEventListener("submit", function(event) {
       row.appendChild(cell);
     }
 
-    gridContainer.appendChild(row);
+    gridContainer.prepend(row);
   }
+
+  const roverCell = gridContainer.querySelector('.jt-row:last-child .jt-cell:first-child');
+  roverCell.classList.add('rover');
 });

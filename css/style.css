@@ -25,3 +25,7 @@
 .obstacle {
   background-color: black;
 }
+
+.rover {
+  background-color: red;
+}
