@@ -55,5 +55,7 @@ form.addEventListener("submit", function(event) {
   }
 
   const roverCell = gridContainer.querySelector('.jt-row:last-child .jt-cell:first-child');
-  roverCell.classList.add('rover');
+  const roverIcon = document.createElement('i');
+  roverIcon.classList.add('fa-regular', 'fa-square-caret-up', 'rover');
+  roverCell.appendChild(roverIcon);
 });
