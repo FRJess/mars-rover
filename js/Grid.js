@@ -6,12 +6,13 @@ form.addEventListener("submit", function(event) {
 
   const numCols = parseInt(document.getElementById("numCols").value);
   const numRows = parseInt(document.getElementById("numRows").value);
-  const root = document.documentElement;
-  root.style.setProperty('--numCols', numCols);
+  const containerWidth = gridContainer.offsetWidth; 
+  const cellWidth = containerWidth / numCols;
 
-  const cellWidth = 100 / numCols;
+  // const cellWidth = 100 / numCols;
 
   gridContainer.innerHTML = "";
+  gridContainer.style.setProperty('--numCols', numCols); 
 
   for (let i = 0; i < numRows; i++) {
     const row = document.createElement('div');
@@ -20,8 +21,8 @@ form.addEventListener("submit", function(event) {
     for (let j = 0; j < numCols; j++) {
       const cell = document.createElement('div');
       cell.classList.add('jt-cell');
-      cell.style.width = `${cellWidth}%`;
-      cell.style.paddingBottom = `${cellWidth}%`; // Imposta l'altezza in base alla larghezza
+      cell.style.width = `${cellWidth}px`;
+      cell.style.height = `${cellWidth}px`;
       row.appendChild(cell);
     }
 

@@ -4,21 +4,20 @@
   box-sizing: border-box;
 }
 
-:root {
-  --numCols: 4;
-}
-
 .grid-container {
-  heigth: 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 auto;
 }
 
 .jt-row {
   display: flex;
-  width: 100%;
 }
 
 .jt-cell {
-  box-sizing: border-box;
-  width: calc(100% / var(--numCols));
   border: 1px solid black;
+  box-sizing: border-box;
+  max-width: 100px;
+  max-height: 100px;
 }
