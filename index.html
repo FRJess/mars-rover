@@ -30,20 +30,25 @@
     <h1 class="text-center py-3">Mars Rover</h1>
     
     <form class="row g-3 mx-4 my-4 pb-2">
-      <p class="">Enter the parameters for the map</p>
+      <p class="">Scegli i parametri della tua mappa</p>
 
-        <div class="col">
-          <label for="numCols" class="mb-1">Column number:</label>
-          <input type="number" class="form-control" id="numCols" name="numCols" min="1" max="20" required>
-        </div>
+      <div class="col">
+        <label for="numCols" class="mb-1">N° di colonne:</label>
+        <input type="number" class="form-control" id="numCols" name="numCols" min="1" max="20" required>
+      </div>
 
-        <div class="col">
-          <label for="numRows" class="mb-1">Row number:</label>
-          <input type="number" class="form-control" id="numRows" name="numRows" min="1" max="20" required>
-        </div>
+      <div class="col">
+        <label for="numRows" class="mb-1">N° di righe:</label>
+        <input type="number" class="form-control" id="numRows" name="numRows" min="1" max="20" required>
+      </div>
+
+      <div class="col">
+        <label for="numObstacles" class="mb-1">N° di ostacoli:</label>
+        <input type="number" class="form-control" id="numObstacles" name="numObstacles" min="1" max="10" required>
+      </div>
 
       <div class="col-12">
-        <button type="submit" class="btn btn-primary">Create grid</button>
+        <button type="submit" class="btn btn-primary">Crea mappa</button>
       </div>
 
     </form>

@@ -6,13 +6,27 @@ form.addEventListener("submit", function(event) {
 
   const numCols = parseInt(document.getElementById("numCols").value);
   const numRows = parseInt(document.getElementById("numRows").value);
-  const containerWidth = gridContainer.offsetWidth; 
+  const numObstacles = parseInt(document.getElementById("numObstacles").value);
+
+  if (numObstacles > numCols * numRows) {
+    alert("Il numero di ostacoli non può essere superiore al numero di celle nella griglia.");
+    return;
+  }
+
+  const obstacles = [];
+
+  for (let i = 0; i < numObstacles; i++) {
+    const obstacleX = parseInt(prompt("Inserisci la posizione X dell'ostacolo " + (i + 1)));
+    const obstacleY = parseInt(prompt("Inserisci la posizione Y dell'ostacolo " + (i + 1)));
+
+    obstacles.push({ x: obstacleX, y: obstacleY });
+  }
+
+  const containerWidth = gridContainer.offsetWidth;
   const cellWidth = containerWidth / numCols;
 
-  // const cellWidth = 100 / numCols;
-
   gridContainer.innerHTML = "";
-  gridContainer.style.setProperty('--numCols', numCols); 
+  gridContainer.style.setProperty('--numCols', numCols);
 
   for (let i = 0; i < numRows; i++) {
     const row = document.createElement('div');
@@ -23,6 +37,12 @@ form.addEventListener("submit", function(event) {
       cell.classList.add('jt-cell');
       cell.style.width = `${cellWidth}px`;
       cell.style.height = `${cellWidth}px`;
+
+      const isObstacle = obstacles.some(obstacle => obstacle.x === j && obstacle.y === (numRows - 1 - i));
+      if (isObstacle) {
+        cell.classList.add('obstacle');
+      }
+
       row.appendChild(cell);
     }
 
