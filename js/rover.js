@@ -37,9 +37,9 @@ function getNextPosition(currentPosition, direction) {
   let nextRowIndex = rowIndex;
   let nextColIndex = colIndex;
 
-  if (direction === 'F') {
+  if (direction === 'ARROWUP' || direction === 'F') {
     nextRowIndex--;
-  } else if (direction === 'B') {
+  } else if (direction === 'ARROWDOWN' || direction === 'B') {
     nextRowIndex++;
   }
 
@@ -54,10 +54,9 @@ function getNextPosition(currentPosition, direction) {
 document.addEventListener("keydown", function(event) {
   event.preventDefault();
   const key = event.key.toUpperCase();
-  if (key === 'F' || key === 'B') {
+  if (key === 'ARROWUP' || key === 'ARROWDOWN' || key === 'F' || key === 'B') {
     moveRover(key);
   }
 });
-
 
 
