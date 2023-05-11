@@ -72,9 +72,25 @@ function getNextPosition(currentPosition, direction) {
   let nextColIndex = colIndex;
 
   if (direction === 'ARROWUP' || direction === 'F') {
-    nextRowIndex--;
+    if (currentDirection === 'N') {
+      nextRowIndex--;
+    } else if (currentDirection === 'E') {
+      nextColIndex++;
+    } else if (currentDirection === 'S') {
+      nextRowIndex++;
+    } else if (currentDirection === 'W') {
+      nextColIndex--;
+    }
   } else if (direction === 'ARROWDOWN' || direction === 'B') {
-    nextRowIndex++;
+    if (currentDirection === 'N') {
+      nextRowIndex++;
+    } else if (currentDirection === 'E') {
+      nextColIndex--;
+    } else if (currentDirection === 'S') {
+      nextRowIndex--;
+    } else if (currentDirection === 'W') {
+      nextColIndex++;
+    }
   }
 
   const nextRow = row.parentElement.children[nextRowIndex];
