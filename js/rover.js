@@ -1,3 +1,5 @@
+let currentDirection = 'N';
+
 function placeRover(gridContainer) {
   const rover = document.createElement('i');
   rover.classList.add('fa-regular', 'fa-square-caret-up', 'rover')
@@ -29,6 +31,26 @@ function moveRover(direction) {
   }
 }
 
+function rotateRover(rotation) {
+  const rover = document.querySelector('.rover');
+  if (!rover) {
+    return;
+  }
+
+  const directions = ['N', 'E', 'S', 'W'];
+  const currentIndex = directions.indexOf(currentDirection);
+  let newIndex;
+
+  if (rotation === 'L') {
+    newIndex = (currentIndex - 1 + directions.length) % directions.length;
+  } else if (rotation === 'R') {
+    newIndex = (currentIndex + 1) % directions.length;
+  }
+
+  currentDirection = directions[newIndex];
+  rover.className = `fa-regular fa-square-caret-${currentDirection.toLowerCase()} rover`;
+}
+
 function getNextPosition(currentPosition, direction) {
   const row = currentPosition.parentElement;
   const rowIndex = Array.from(row.parentElement.children).indexOf(row);
@@ -54,8 +76,15 @@ function getNextPosition(currentPosition, direction) {
 document.addEventListener("keydown", function(event) {
   event.preventDefault();
   const key = event.key.toUpperCase();
-  if (key === 'ARROWUP' || key === 'ARROWDOWN' || key === 'F' || key === 'B') {
+
+  if (key === 'ARROWUP' || key === 'F') {
     moveRover(key);
+  } else if (key === 'ARROWDOWN' || key === 'B') {
+    moveRover(key);
+  } else if (key === 'L') {
+    rotateRover('L');
+  } else if (key === 'R') {
+    rotateRover('R');
   }
 });
 
