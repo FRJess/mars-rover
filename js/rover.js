@@ -29,32 +29,6 @@ function moveRover(direction) {
     currentPosition.removeChild(rover);
     nextPosition.appendChild(rover);
   }
-  else {
-    const gridContainer = currentPosition.parentElement.parentElement;
-    const numRows = gridContainer.children.length;
-    const numCols = gridContainer.querySelector('.jt-row').children.length;
-
-    let nextRowIndex = getWrappedIndex(currentPosition.parentElement, numRows, direction === 'ARROWUP' || direction === 'F', direction === 'ARROWDOWN' || direction === 'B');
-    let nextColIndex = getWrappedIndex(currentPosition, numCols, direction === 'ARROWLEFT' || direction === 'L', direction === 'ARROWRIGHT' || direction === 'R');
-
-    const nextRow = gridContainer.children[nextRowIndex];
-    const nextCell = nextRow.children[nextColIndex];
-    nextCell.appendChild(rover);
-  }
-}
-
-function getWrappedIndex(element, size, decrease, increase) {
-  const currentIndex = Array.from(element.parentElement.children).indexOf(element);
-
-  if (decrease) {
-    return currentIndex === 0 ? size - 1 : currentIndex - 1;
-  }
-
-  if (increase) {
-    return currentIndex === size - 1 ? 0 : currentIndex + 1;
-  }
-
-  return currentIndex;
 }
 
 function rotateRover(rotation) {
@@ -93,6 +67,8 @@ function getNextPosition(currentPosition, direction) {
   const row = currentPosition.parentElement;
   const rowIndex = Array.from(row.parentElement.children).indexOf(row);
   const colIndex = Array.from(row.children).indexOf(currentPosition);
+  const gridRows = Array.from(row.parentElement.children);
+  const gridCols = Array.from(row.children);
 
   let nextRowIndex = rowIndex;
   let nextColIndex = colIndex;
@@ -100,26 +76,50 @@ function getNextPosition(currentPosition, direction) {
   if (direction === 'ARROWUP' || direction === 'F') {
     if (currentDirection === 'N') {
       nextRowIndex--;
+      if (nextRowIndex < 0) {
+        nextRowIndex = gridRows.length - 1;
+      }
     } else if (currentDirection === 'E') {
       nextColIndex++;
+      if (nextColIndex >= gridCols.length) {
+        nextColIndex = 0;
+      }
     } else if (currentDirection === 'S') {
       nextRowIndex++;
+      if (nextRowIndex >= gridRows.length) {
+        nextRowIndex = 0;
+      }
     } else if (currentDirection === 'W') {
       nextColIndex--;
+      if (nextColIndex < 0) {
+        nextColIndex = gridCols.length - 1;
+      }
     }
   } else if (direction === 'ARROWDOWN' || direction === 'B') {
     if (currentDirection === 'N') {
       nextRowIndex++;
+      if (nextRowIndex >= gridRows.length) {
+        nextRowIndex = 0;
+      }
     } else if (currentDirection === 'E') {
       nextColIndex--;
+      if (      nextColIndex < 0) {
+        nextColIndex = gridCols.length - 1;
+      }
     } else if (currentDirection === 'S') {
       nextRowIndex--;
+      if (nextRowIndex < 0) {
+        nextRowIndex = gridRows.length - 1;
+      }
     } else if (currentDirection === 'W') {
       nextColIndex++;
+      if (nextColIndex >= gridCols.length) {
+        nextColIndex = 0;
+      }
     }
   }
 
-  const nextRow = row.parentElement.children[nextRowIndex];
+  const nextRow = gridRows[nextRowIndex];
   if (nextRow) {
     const nextCell = nextRow.children[nextColIndex];
     if (!nextCell.classList.contains('obstacle')) {
@@ -129,6 +129,7 @@ function getNextPosition(currentPosition, direction) {
 
   return null;
 }
+
 document.addEventListener("keydown", function(event) {
   event.preventDefault();
   const key = event.key.toUpperCase();
@@ -143,3 +144,4 @@ document.addEventListener("keydown", function(event) {
     rotateRover('R');
   }
 });
+
