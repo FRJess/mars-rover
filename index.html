@@ -34,17 +34,17 @@
     
       <div class="col">
         <label for="numCols" class="mb-1">Column n°</label>
-        <input type="number" class="form-control" id="numCols" name="numCols" min="1" max="20" required>
+        <input type="number" class="form-control" id="numCols" name="numCols" min="1" max="20" required placeholder="Add from 1 to 20 columns">
       </div>
     
       <div class="col">
         <label for="numRows" class="mb-1">Row n°</label>
-        <input type="number" class="form-control" id="numRows" name="numRows" min="1" max="20" required>
+        <input type="number" class="form-control" id="numRows" name="numRows" min="1" max="20" required placeholder="Add from 1 to 20 rows">
       </div>
     
       <div class="col">
         <label for="numObstacles" class="mb-1">Obstacle n°</label>
-        <input type="number" class="form-control" id="numObstacles" name="numObstacles" min="1" max="10" required>
+        <input type="number" class="form-control" id="numObstacles" name="numObstacles" min="1" max="10" required placeholder="Add from 1 to 10 obstacles">
       </div>
     
       <div class="col-12">
@@ -52,13 +52,22 @@
       </div>
     </form>
 
-    </form>
+
     
     <div class="container my-4">
-      <div class="grid-container">
-        
-      </div>
+      <div class="grid-container"></div>
     </div>
+
+    <div class="row ms-4">
+      <h4 class="">Rover controls:</h4>
+      <ul>
+        <li><i class="fa-solid fa-caret-up"></i> or <i class="fa-solid fa-f"></i> to move forward</li>
+        <li><i class="fa-solid fa-caret-down"></i> or <i class="fa-solid fa-b"></i> to move background</li>
+        <li><i class="fa-solid fa-r"></i> to rotate right</li>
+        <li><i class="fa-solid fa-l"></i> to rotate left</li>
+      </ul>
+    </div>
+    
 
     <!-- JS -->
     <script src="js/grid.js"></script>
