@@ -95,12 +95,14 @@ function getNextPosition(currentPosition, direction) {
 
   const nextRow = row.parentElement.children[nextRowIndex];
   if (nextRow) {
-    return nextRow.children[nextColIndex];
+    const nextCell = nextRow.children[nextColIndex];
+    if (!nextCell.classList.contains('obstacle')) {
+      return nextCell;
+    }
   }
 
   return null;
 }
-
 document.addEventListener("keydown", function(event) {
   event.preventDefault();
   const key = event.key.toUpperCase();
