@@ -29,6 +29,32 @@ function moveRover(direction) {
     currentPosition.removeChild(rover);
     nextPosition.appendChild(rover);
   }
+  else {
+    const gridContainer = currentPosition.parentElement.parentElement;
+    const numRows = gridContainer.children.length;
+    const numCols = gridContainer.querySelector('.jt-row').children.length;
+
+    let nextRowIndex = getWrappedIndex(currentPosition.parentElement, numRows, direction === 'ARROWUP' || direction === 'F', direction === 'ARROWDOWN' || direction === 'B');
+    let nextColIndex = getWrappedIndex(currentPosition, numCols, direction === 'ARROWLEFT' || direction === 'L', direction === 'ARROWRIGHT' || direction === 'R');
+
+    const nextRow = gridContainer.children[nextRowIndex];
+    const nextCell = nextRow.children[nextColIndex];
+    nextCell.appendChild(rover);
+  }
+}
+
+function getWrappedIndex(element, size, decrease, increase) {
+  const currentIndex = Array.from(element.parentElement.children).indexOf(element);
+
+  if (decrease) {
+    return currentIndex === 0 ? size - 1 : currentIndex - 1;
+  }
+
+  if (increase) {
+    return currentIndex === size - 1 ? 0 : currentIndex + 1;
+  }
+
+  return currentIndex;
 }
 
 function rotateRover(rotation) {
