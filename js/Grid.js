@@ -9,18 +9,18 @@ form.addEventListener("submit", function(event) {
   const numObstacles = parseInt(document.getElementById("numObstacles").value);
 
   if (numObstacles > numCols * numRows) {
-    alert("Il numero di ostacoli non può essere superiore al numero di celle nella griglia.");
+    alert("You cannot add more obstacles than grid cells.");
     return;
   }
 
   const obstacles = [];
 
   for (let i = 0; i < numObstacles; i++) {
-    const obstacleX = parseInt(prompt("Inserisci la posizione X dell'ostacolo " + (i + 1)));
-    const obstacleY = parseInt(prompt("Inserisci la posizione Y dell'ostacolo " + (i + 1)));
+    const obstacleX = parseInt(prompt("Chose position X for the obstacle " + (i + 1)));
+    const obstacleY = parseInt(prompt("Chose position Y for the " + (i + 1)));
 
     if (obstacleX === 0 && obstacleY === 0) {
-      alert("Posizione non valida. L'ostacolo non può essere posizionato qui perché è la posizione di partenza del rover.");
+      alert("Invalid position. The obstacle cannot be add here because it's the rover starting cell.");
       return;
     }
 
