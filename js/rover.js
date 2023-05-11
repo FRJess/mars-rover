@@ -2,7 +2,7 @@ let currentDirection = 'N';
 
 function placeRover(gridContainer) {
   const rover = document.createElement('i');
-  rover.classList.add('fa-regular', 'fa-square-caret-up', 'rover')
+  rover.classList.add('fa-regular', 'fa-square-caret-up', 'rover');
 
   function checkGridReady() {
     const startPosition = gridContainer.querySelector('.jt-row:last-child .jt-cell:first-child');
@@ -12,9 +12,9 @@ function placeRover(gridContainer) {
       setTimeout(checkGridReady, 100);
     }
   }
-  checkGridReady();
-};
 
+  checkGridReady();
+}
 
 function moveRover(direction) {
   const rover = document.querySelector('.rover');
@@ -48,7 +48,19 @@ function rotateRover(rotation) {
   }
 
   currentDirection = directions[newIndex];
-  rover.className = `fa-regular fa-square-caret-${currentDirection.toLowerCase()} rover`;
+  const iconClass = getIconClassForDirection(currentDirection);
+  rover.className = `fa-regular ${iconClass} rover`;
+}
+
+function getIconClassForDirection(direction) {
+  const directionMap = {
+    'N': 'fa-square-caret-up',
+    'E': 'fa-square-caret-right',
+    'S': 'fa-square-caret-down',
+    'W': 'fa-square-caret-left'
+  };
+
+  return directionMap[direction];
 }
 
 function getNextPosition(currentPosition, direction) {
@@ -87,5 +99,3 @@ document.addEventListener("keydown", function(event) {
     rotateRover('R');
   }
 });
-
-
