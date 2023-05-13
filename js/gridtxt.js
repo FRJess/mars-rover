@@ -17,7 +17,6 @@ function loadGridData() {
 function parseGridData(fileContent) {
   const lines = fileContent.split("\n");
   let gridData = {
-    obstacles: []
   };
 
   for (let i = 0; i < lines.length; i++) {
@@ -34,12 +33,14 @@ function parseGridData(fileContent) {
         if (key === "Size") {
           gridData.numCols = numCols;
           gridData.numRows = numRows;
-          console.log("NumCols:", gridData.numCols);
-          console.log("NumRows:", gridData.numRows);
+          console.log("NumCols:", gridData.numCols); //remove
+          console.log("NumRows:", gridData.numRows); //remove
         } else if (key === "Obstacle") {
+          gridData.obstacles = gridData.obstacles || [];
           const obstacleX = parseInt(match[2], 10);
           const obstacleY = parseInt(match[3], 10);
           gridData.obstacles.push({ x: obstacleX, y: obstacleY });
+          console.log("Obstacles:", gridData.obstacles); //remove
         }
       }
     }
@@ -48,11 +49,12 @@ function parseGridData(fileContent) {
   createGrid(gridData);
 }
 
+
 function createGrid(gridData) {
   const gridContainer = document.querySelector('.grid-container');
   const numCols = gridData.numCols;
   const numRows = gridData.numRows;
-  const cellWidth = 50;
+  const cellWidth = 50; 
 
   gridContainer.innerHTML = "";
   gridContainer.style.setProperty('--numCols', numCols);
