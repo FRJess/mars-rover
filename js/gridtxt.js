@@ -63,7 +63,9 @@ function createGrid(gridData) {
   const gridContainer = document.querySelector('.grid-container');
   const numCols = gridData.numCols;
   const numRows = gridData.numRows;
-  const cellWidth = 50; 
+
+  const containerWidth = gridContainer.offsetWidth;
+  const cellWidth = containerWidth / numCols;
 
   gridContainer.innerHTML = "";
   gridContainer.style.setProperty('--numCols', numCols);
