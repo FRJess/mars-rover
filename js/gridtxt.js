@@ -16,8 +16,7 @@ function loadGridData() {
 
 function parseGridData(fileContent) {
   const lines = fileContent.split("\n");
-  let gridData = {
-  };
+  let gridData = {};
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i].trim();
@@ -33,14 +32,19 @@ function parseGridData(fileContent) {
         if (key === "Size") {
           gridData.numCols = numCols;
           gridData.numRows = numRows;
-          console.log("NumCols:", gridData.numCols); //remove
-          console.log("NumRows:", gridData.numRows); //remove
+          console.log("NumCols:", gridData.numCols);
+          console.log("NumRows:", gridData.numRows);
         } else if (key === "Obstacle") {
           gridData.obstacles = gridData.obstacles || [];
           const obstacleX = parseInt(match[2], 10);
           const obstacleY = parseInt(match[3], 10);
-          gridData.obstacles.push({ x: obstacleX, y: obstacleY });
-          console.log("Obstacles:", gridData.obstacles); //remove
+
+          if (obstacleX === 0 && obstacleY === 0) {
+            alert("Invalid position. The obstacle cannot be add here because it's the rover starting cell.");
+            return;
+          } else {
+            gridData.obstacles.push({ x: obstacleX, y: obstacleY });
+          }
         }
       }
     }
