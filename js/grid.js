@@ -17,7 +17,7 @@ form.addEventListener("submit", function(event) {
 
   for (let i = 0; i < numObstacles; i++) {
     const obstacleX = parseInt(prompt("Chose position X for the obstacle " + (i + 1)));
-    const obstacleY = parseInt(prompt("Chose position Y for the " + (i + 1)));
+    const obstacleY = parseInt(prompt("Chose position Y for the obstacle " + (i + 1)));
 
     if (obstacleX === 0 && obstacleY === 0) {
       alert("Invalid position. The obstacle cannot be add here because it's the rover starting cell.");
