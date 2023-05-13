@@ -88,4 +88,5 @@ function createGrid(gridData) {
 
     gridContainer.prepend(row);
   }
+  placeRover(gridContainer);
 }
