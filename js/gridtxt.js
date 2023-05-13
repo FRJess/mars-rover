@@ -40,11 +40,16 @@ function parseGridData(fileContent) {
           const obstacleY = parseInt(match[3], 10);
 
           if (obstacleX === 0 && obstacleY === 0) {
-            alert("Invalid position. The obstacle cannot be add here because it's the rover starting cell.");
-            return;
-          } else {
-            gridData.obstacles.push({ x: obstacleX, y: obstacleY });
+            console.log("Errore: L'ostacolo non può essere posizionato nella casella in basso a sinistra.");
+            continue;
           }
+
+          if (gridData.obstacles.length >= (gridData.numCols * gridData.numRows) / 2) {
+            console.log("Errore: Gli ostacoli non possono essere più della metà delle caselle totali.");
+            continue;
+          }
+
+          gridData.obstacles.push({ x: obstacleX, y: obstacleY });
         }
       }
     }

@@ -2,4 +2,3 @@ Grid
 Size 5 4
 Obstacle 2 0
 Obstacle 0 3
-Obstacle 1 0
