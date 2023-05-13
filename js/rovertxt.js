@@ -8,7 +8,7 @@ function placeRover(gridContainer) {
     const startPosition = gridContainer.querySelector('.jt-row:last-child .jt-cell:first-child');
     if (startPosition) {
       startPosition.appendChild(rover);
-      setTimeout(executeCommands, 2000); // Ritardo di 2 secondi prima dell'esecuzione dei comandi
+      executeCommands();
     } else {
       setTimeout(checkGridReady, 100);
     }
@@ -17,8 +17,20 @@ function placeRover(gridContainer) {
   checkGridReady();
 }
 
+function executeCommandSequence(commands) {
+  const delay = 2000; // Delay between commands in milliseconds
+
+  commands.forEach((command, index) => {
+    setTimeout(() => {
+      console.log('Command executed:', command);
+      executeCommand(command);
+    }, index * delay);
+  });
+}
+
 function executeCommands() {
-  const filePath = "input.txt"; // Percorso del file di testo nel progetto
+  const filePath = "input.txt"; // Aggiungere caricamento file
+  const lineDelay = 3000; // Delay tra righe comandi
 
   fetch(filePath)
     .then(response => response.text())
@@ -26,21 +38,23 @@ function executeCommands() {
       const lines = fileContent.split("\n");
       let commandSection = false;
 
-      for (let i = 0; i < lines.length; i++) {
-        const line = lines[i].trim();
+      lines.forEach((line, index) => {
+        const trimmedLine = line.trim();
 
-        if (line === "Commands") {
+        if (trimmedLine === "Commands") {
           commandSection = true;
-          continue;
+          return;
         }
 
         if (commandSection) {
-          const commands = mapCommands(line);
-          executeCommandSequence(commands);
+          const commands = mapCommands(trimmedLine);
+          setTimeout(() => {
+            executeCommandSequence(commands);
+          }, index * lineDelay);
         }
-      }
+      });
     })
-    .catch(error => console.log("Errore durante il caricamento del file:", error));
+    .catch(error => console.log("Error loading file:", error));
 }
 
 function mapCommands(commandString) {
@@ -52,17 +66,6 @@ function mapCommands(commandString) {
   };
 
   return commandString.split('').map(command => commandMap[command]).filter(Boolean);
-}
-
-function executeCommandSequence(commands) {
-  const delay = 2000; // Ritardo tra i comandi in millisecondi
-
-  commands.forEach((command, index) => {
-    setTimeout(() => {
-      console.log('Command executed:', command);
-      executeCommand(command);
-    }, index * delay);
-  });
 }
 
 function executeCommand(command) {
