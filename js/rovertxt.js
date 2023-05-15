@@ -240,6 +240,7 @@ function getNextPosition(currentPosition, direction) {
 }
 
 
+
 function getIconClassForDirection(direction) {
   switch (direction) {
     case 'N':
