@@ -116,12 +116,13 @@ function moveRover(direction) {
     return;
   }
 
-  const currentPosition = rover.parentElement;
   const nextPosition = getNextPosition(currentPosition, direction);
 
   if (nextPosition) {
     currentPosition.removeChild(rover);
     nextPosition.appendChild(rover);
+
+    currentPosition = nextPosition; // Aggiornamento della variabile globale currentPosition
 
     const positionString = nextPosition ? getPositionString(nextPosition) : null;
 
@@ -131,12 +132,22 @@ function moveRover(direction) {
   }
 }
 
+//TO ADD: O IF OBSTACLE
 function getPositionString(position) {
   const gridRows = Array.from(position.parentElement.parentElement.children);
-  const rowIndex = gridRows.length - Array.from(gridRows).indexOf(position.parentElement) - 1;
+  const rowIndex = gridRows.indexOf(position.parentElement);
   const colIndex = Array.from(position.parentElement.children).indexOf(position);
-  return `${colIndex}:${rowIndex}:${currentDirection}`;
+
+  const numCols = gridRows[0].children.length;
+  const numRows = gridRows.length;
+
+  const adjustedColIndex = colIndex;
+  const adjustedRowIndex = numRows - rowIndex - 1;
+
+  return `${adjustedColIndex}:${adjustedRowIndex}:${currentDirection}`;
 }
+
+
 
 function updatePositionOutput() {
   const positionOutput = document.getElementById('position-output');
