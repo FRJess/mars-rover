@@ -4,7 +4,6 @@ let positionList = [];
 let commandStrings = [];
 let finalPositions = [];
 
-
 function placeRover(gridContainer) {
   const rover = document.createElement('i');
   rover.classList.add('fa-regular', 'fa-square-caret-up', 'rover');
@@ -14,11 +13,12 @@ function placeRover(gridContainer) {
     if (startPosition) {
       startPosition.appendChild(rover);
 
-      
+      // Inizializza la posizione corrente e aggiungila alla positionList
       currentPosition = startPosition;
       const positionString = getPositionString(currentPosition);
       positionList.push(positionString);
 
+      // Aggiorna l'output della posizione
       updatePositionOutput();
 
       executeCommands();
@@ -69,13 +69,14 @@ async function executeCommands() {
       if (commandSection) {
         const commands = mapCommands(line);
         commandStrings.push(line);
+        // Aggiungi un ritardo prima dell'esecuzione della sequenza di comandi
+        await delay(lineDelay);
+
         await executeCommandSequence(commands, currentPosition);
 
         finalPositions.push(getPositionString(currentPosition));
 
         updatePositionOutput();
-
-        await delay(lineDelay);
       }
     }
   } catch (error) {
@@ -125,6 +126,7 @@ function moveRover(direction) {
     nextPosition.appendChild(rover);
 
     const positionString = nextPosition ? getPositionString(nextPosition) : null;
+    // const positionString = getPositionString(nextPosition);
 
     if (positionString) {
       positionList.push(positionString);
@@ -254,3 +256,5 @@ function delay(ms) {
 }
 
 placeRover(document.getElementById('grid-container'));
+// placeRover(document.querySelector('.grid-container'));
+

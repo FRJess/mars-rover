@@ -1,5 +1,5 @@
 const form = document.querySelector("form");
-const gridContainer = document.querySelector('.grid-container');
+const gridContainer = document.getElementById('grid-container');
 
 form.addEventListener("submit", function(event) {
   event.preventDefault();

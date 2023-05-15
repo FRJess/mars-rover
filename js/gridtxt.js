@@ -60,7 +60,7 @@ function parseGridData(fileContent) {
 
 
 function createGrid(gridData) {
-  const gridContainer = document.querySelector('.grid-container');
+  const gridContainer = document.getElementById('grid-container');
   const numCols = gridData.numCols;
   const numRows = gridData.numRows;
 
@@ -90,5 +90,4 @@ function createGrid(gridData) {
 
     gridContainer.prepend(row);
   }
-  placeRover(gridContainer);
 }
