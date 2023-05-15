@@ -258,5 +258,3 @@ function getIconClassForDirection(direction) {
 function delay(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
-
-placeRover(document.getElementById('grid-container'));
