@@ -177,7 +177,6 @@ function rotateRover(rotation) {
 }
 
 function getNextPosition(currentPosition, direction) {
-  console.log('Getting next position:', direction);
   const row = currentPosition.parentElement;
   const rowIndex = Array.from(row.parentElement.children).indexOf(row);
   const colIndex = Array.from(row.children).indexOf(currentPosition);
@@ -219,7 +218,8 @@ function getNextPosition(currentPosition, direction) {
       nextColIndex--;
       if (nextColIndex < 0) {
         nextColIndex = gridCols.length - 1;
-      }    } else if (currentDirection === 'S') {
+      }    
+    } else if (currentDirection === 'S') {
       nextRowIndex--;
       if (nextRowIndex < 0) {
         nextRowIndex = gridRows.length - 1;
@@ -235,6 +235,8 @@ function getNextPosition(currentPosition, direction) {
   const nextRow = gridRows[nextRowIndex];
   return nextRow ? gridRows[nextRowIndex].children[nextColIndex] : null;
 }
+
+
 
 function getIconClassForDirection(direction) {
   switch (direction) {
