@@ -10,15 +10,14 @@ function placeRover(gridContainer) {
 
   function checkGridReady() {
     const startPosition = gridContainer.querySelector('.jt-row:last-child .jt-cell:first-child');
+
     if (startPosition) {
       startPosition.appendChild(rover);
 
-      // Inizializza la posizione corrente e aggiungila alla positionList
       currentPosition = startPosition;
       const positionString = getPositionString(currentPosition);
       positionList.push(positionString);
 
-      // Aggiorna l'output della posizione
       updatePositionOutput();
 
       executeCommands();
@@ -69,7 +68,6 @@ async function executeCommands() {
       if (commandSection) {
         const commands = mapCommands(line);
         commandStrings.push(line);
-        // Aggiungi un ritardo prima dell'esecuzione della sequenza di comandi
         await delay(lineDelay);
 
         await executeCommandSequence(commands, currentPosition);
@@ -126,7 +124,6 @@ function moveRover(direction) {
     nextPosition.appendChild(rover);
 
     const positionString = nextPosition ? getPositionString(nextPosition) : null;
-    // const positionString = getPositionString(nextPosition);
 
     if (positionString) {
       positionList.push(positionString);
@@ -135,9 +132,9 @@ function moveRover(direction) {
 }
 
 function getPositionString(position) {
-  const row = position.parentElement;
-  const rowIndex = Array.from(row.parentElement.children).indexOf(row);
-  const colIndex = Array.from(row.children).indexOf(position);
+  const gridRows = Array.from(position.parentElement.parentElement.children);
+  const rowIndex = gridRows.length - Array.from(gridRows).indexOf(position.parentElement) - 1;
+  const colIndex = Array.from(position.parentElement.children).indexOf(position);
   return `${colIndex}:${rowIndex}:${currentDirection}`;
 }
 
@@ -218,7 +215,7 @@ function getNextPosition(currentPosition, direction) {
       nextColIndex--;
       if (nextColIndex < 0) {
         nextColIndex = gridCols.length - 1;
-      }    
+      }
     } else if (currentDirection === 'S') {
       nextRowIndex--;
       if (nextRowIndex < 0) {
@@ -233,9 +230,14 @@ function getNextPosition(currentPosition, direction) {
   }
 
   const nextRow = gridRows[nextRowIndex];
-  return nextRow ? gridRows[nextRowIndex].children[nextColIndex] : null;
-}
+  const nextPosition = nextRow ? gridRows[nextRowIndex].children[nextColIndex] : null;
 
+  if (nextPosition && nextPosition.classList.contains('obstacle')) {
+    return null; 
+  }
+
+  return nextPosition;
+}
 
 
 function getIconClassForDirection(direction) {
@@ -258,5 +260,3 @@ function delay(ms) {
 }
 
 placeRover(document.getElementById('grid-container'));
-// placeRover(document.querySelector('.grid-container'));
-
