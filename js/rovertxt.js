@@ -1,4 +1,9 @@
 let currentDirection = 'N';
+let currentPosition;
+let positionList = [];
+let commandStrings = [];
+let finalPositions = [];
+
 
 function placeRover(gridContainer) {
   const rover = document.createElement('i');
@@ -8,6 +13,14 @@ function placeRover(gridContainer) {
     const startPosition = gridContainer.querySelector('.jt-row:last-child .jt-cell:first-child');
     if (startPosition) {
       startPosition.appendChild(rover);
+
+      
+      currentPosition = startPosition;
+      const positionString = getPositionString(currentPosition);
+      positionList.push(positionString);
+
+      updatePositionOutput();
+
       executeCommands();
     } else {
       setTimeout(checkGridReady, 100);
@@ -17,44 +30,57 @@ function placeRover(gridContainer) {
   checkGridReady();
 }
 
-function executeCommandSequence(commands) {
-  const delay = 2000; // Delay between commands in milliseconds
-
-  commands.forEach((command, index) => {
-    setTimeout(() => {
-      console.log('Command executed:', command);
-      executeCommand(command);
-    }, index * delay);
+function executeCommandSequence(commands, currentPosition) {
+  return new Promise(resolve => {
+    let currentIndex = 0;
+    const executeNextCommand = () => {
+      if (currentIndex < commands.length) {
+        const command = commands[currentIndex];
+        console.log('Command executed:', command);
+        executeCommand(command, currentIndex === commands.length - 1);
+        currentIndex++;
+        setTimeout(executeNextCommand, 2000);
+      } else {
+        resolve();
+      }
+    };
+    executeNextCommand();
   });
 }
 
-function executeCommands() {
-  const filePath = "input.txt"; // Aggiungere caricamento file
-  const lineDelay = 3000; // Delay tra righe comandi
+async function executeCommands() {
+  const filePath = "input.txt"; // Aggiungi il percorso del file
+  const lineDelay = 3000;
 
-  fetch(filePath)
-    .then(response => response.text())
-    .then(fileContent => {
-      const lines = fileContent.split("\n");
-      let commandSection = false;
+  try {
+    const response = await fetch(filePath);
+    const fileContent = await response.text();
+    const lines = fileContent.split("\n");
+    let commandSection = false;
 
-      lines.forEach((line, index) => {
-        const trimmedLine = line.trim();
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i].trim();
 
-        if (trimmedLine === "Commands") {
-          commandSection = true;
-          return;
-        }
+      if (line === "Commands") {
+        commandSection = true;
+        continue;
+      }
 
-        if (commandSection) {
-          const commands = mapCommands(trimmedLine);
-          setTimeout(() => {
-            executeCommandSequence(commands);
-          }, index * lineDelay);
-        }
-      });
-    })
-    .catch(error => console.log("Error loading file:", error));
+      if (commandSection) {
+        const commands = mapCommands(line);
+        commandStrings.push(line);
+        await executeCommandSequence(commands, currentPosition);
+
+        finalPositions.push(getPositionString(currentPosition));
+
+        updatePositionOutput();
+
+        await delay(lineDelay);
+      }
+    }
+  } catch (error) {
+    console.log("Error loading file:", error);
+  }
 }
 
 function mapCommands(commandString) {
@@ -68,7 +94,7 @@ function mapCommands(commandString) {
   return commandString.split('').map(command => commandMap[command]).filter(Boolean);
 }
 
-function executeCommand(command) {
+function executeCommand(command, isLastCommand) {
   switch (command) {
     case 'F':
     case 'B':
@@ -79,8 +105,10 @@ function executeCommand(command) {
       rotateRover(command);
       break;
   }
+  if (isLastCommand) {
+    updatePositionOutput();
+  }
 }
-
 
 function moveRover(direction) {
   console.log('Moving rover:', direction);
@@ -95,6 +123,32 @@ function moveRover(direction) {
   if (nextPosition) {
     currentPosition.removeChild(rover);
     nextPosition.appendChild(rover);
+
+    const positionString = nextPosition ? getPositionString(nextPosition) : null;
+
+    if (positionString) {
+      positionList.push(positionString);
+    }
+  }
+}
+
+function getPositionString(position) {
+  const row = position.parentElement;
+  const rowIndex = Array.from(row.parentElement.children).indexOf(row);
+  const colIndex = Array.from(row.children).indexOf(position);
+  return `${colIndex}:${rowIndex}:${currentDirection}`;
+}
+
+function updatePositionOutput() {
+  const positionOutput = document.getElementById('position-output');
+  if (positionOutput) {
+    positionOutput.innerHTML = "";
+
+    finalPositions.forEach((position) => {
+      const listItem = document.createElement('li');
+      listItem.textContent = position;
+      positionOutput.appendChild(listItem);
+    });
   }
 }
 
@@ -118,17 +172,6 @@ function rotateRover(rotation) {
   currentDirection = directions[newIndex];
   const iconClass = getIconClassForDirection(currentDirection);
   rover.className = `fa-regular ${iconClass} rover`;
-}
-
-function getIconClassForDirection(direction) {
-  const directionMap = {
-    'N': 'fa-square-caret-up',
-    'E': 'fa-square-caret-right',
-    'S': 'fa-square-caret-down',
-    'W': 'fa-square-caret-left'
-    };
-    
-return directionMap[direction];
 }
 
 function getNextPosition(currentPosition, direction) {
@@ -174,8 +217,7 @@ function getNextPosition(currentPosition, direction) {
       nextColIndex--;
       if (nextColIndex < 0) {
         nextColIndex = gridCols.length - 1;
-      }
-    } else if (currentDirection === 'S') {
+      }    } else if (currentDirection === 'S') {
       nextRowIndex--;
       if (nextRowIndex < 0) {
         nextRowIndex = gridRows.length - 1;
@@ -189,12 +231,26 @@ function getNextPosition(currentPosition, direction) {
   }
 
   const nextRow = gridRows[nextRowIndex];
-  if (nextRow) {
-    const nextCell = nextRow.children[nextColIndex];
-    if (!nextCell.classList.contains('obstacle')) {
-      return nextCell;
-    }
-  }
-
-  return null;
+  return nextRow ? gridRows[nextRowIndex].children[nextColIndex] : null;
 }
+
+function getIconClassForDirection(direction) {
+  switch (direction) {
+    case 'N':
+      return 'fa-square-caret-up';
+    case 'E':
+      return 'fa-square-caret-right';
+    case 'S':
+      return 'fa-square-caret-down';
+    case 'W':
+      return 'fa-square-caret-left';
+    default:
+      return '';
+  }
+}
+
+function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+placeRover(document.getElementById('grid-container'));

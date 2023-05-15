@@ -5,4 +5,5 @@ Obstacle 0 3
 Obstacle 3 2
 Commands
 RF
-LFF
+LFFF
+RFF
