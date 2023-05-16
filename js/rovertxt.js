@@ -147,8 +147,6 @@ function getPositionString(position) {
   return `${adjustedColIndex}:${adjustedRowIndex}:${currentDirection}`;
 }
 
-
-
 function updatePositionOutput() {
   const positionOutput = document.getElementById('position-output');
   if (positionOutput) {
@@ -244,13 +242,11 @@ function getNextPosition(currentPosition, direction) {
   const nextPosition = nextRow ? gridRows[nextRowIndex].children[nextColIndex] : null;
 
   if (nextPosition && nextPosition.classList.contains('obstacle')) {
-    return null; 
+    return currentPosition;
   }
 
   return nextPosition;
 }
-
-
 
 function getIconClassForDirection(direction) {
   switch (direction) {
