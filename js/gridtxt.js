@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 function loadGridData() {
-  const filePath = "input.txt"; // File nel progetto, da sostituire con file utente
+  const filePath = "input.txt";
   fetch(filePath)
     .then(response => response.text())
     .then(fileContent => {

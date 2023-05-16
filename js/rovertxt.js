@@ -132,7 +132,7 @@ function moveRover(direction) {
   }
 }
 
-//TO ADD: O IF OBSTACLE
+//TO FIX: O IF OBSTACLE
 function getPositionString(position) {
   const gridRows = Array.from(position.parentElement.parentElement.children);
   const rowIndex = gridRows.indexOf(position.parentElement);
@@ -141,10 +141,12 @@ function getPositionString(position) {
   const numCols = gridRows[0].children.length;
   const numRows = gridRows.length;
 
+  const obstacleSymbol = position.classList.contains('obstacle') ? 'O:' : '';
+
   const adjustedColIndex = colIndex;
   const adjustedRowIndex = numRows - rowIndex - 1;
 
-  return `${adjustedColIndex}:${adjustedRowIndex}:${currentDirection}`;
+  return `${obstacleSymbol}${adjustedColIndex}:${adjustedRowIndex}:${currentDirection}`;
 }
 
 function updatePositionOutput() {
@@ -242,11 +244,12 @@ function getNextPosition(currentPosition, direction) {
   const nextPosition = nextRow ? gridRows[nextRowIndex].children[nextColIndex] : null;
 
   if (nextPosition && nextPosition.classList.contains('obstacle')) {
-    return currentPosition;
+    return null; 
   }
 
   return nextPosition;
 }
+
 
 function getIconClassForDirection(direction) {
   switch (direction) {
