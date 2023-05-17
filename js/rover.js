@@ -1,37 +1,182 @@
 let currentDirection = 'N';
+let currentPosition;
+let positionList = [];
+let commandStrings = [];
+let finalPositions = [];
+let obstacleEncountered = false;
+let obstacleCommands = [];
 
 function placeRover(gridContainer) {
   const rover = document.createElement('i');
   rover.classList.add('fa-regular', 'fa-square-caret-up', 'rover');
 
-  function checkGridReady() {
+  const checkGridReady = () => {
     const startPosition = gridContainer.querySelector('.jt-row:last-child .jt-cell:first-child');
+
     if (startPosition) {
       startPosition.appendChild(rover);
+
+      currentPosition = startPosition;
+      const positionString = getPositionString(currentPosition);
+      positionList.push(positionString);
+
+      updatePositionOutput();
+
+      executeCommands();
     } else {
       setTimeout(checkGridReady, 100);
     }
-  }
+  };
 
   checkGridReady();
 }
 
+async function executeCommandSequence(commands, currentPosition) {
+  await commands.reduce(async (promise, command, currentIndex) => {
+    await promise;
+    console.log('Command executed:', command);
+    executeCommand(command, currentIndex === commands.length - 1);
+    await delay(2000);
+  }, Promise.resolve());
+}
+
+async function executeCommands() {
+  const filePath = "input.txt"; // Aggiungi il percorso del file
+  const lineDelay = 3000;
+
+  try {
+    const response = await fetch(filePath);
+    const fileContent = await response.text();
+    const lines = fileContent.split("\n");
+    let commandSection = false;
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i].trim();
+
+      if (line === "Commands") {
+        commandSection = true;
+        continue;
+      }
+
+      if (commandSection) {
+        const commands = mapCommands(line);
+        commandStrings.push(line);
+        await delay(lineDelay);
+
+        let obstacleEncountered = false;
+        const initialPosition = currentPosition;
+        await executeCommandSequence(commands, currentPosition);
+
+        const positionString = getPositionString(currentPosition);
+        finalPositions.push(positionString);
+
+        updatePositionOutput();
+
+        if (initialPosition === currentPosition) {
+          console.log("Obstacle encountered:", commands.join(", "));
+          obstacleEncountered = true;
+        } else if (obstacleEncountered) {
+          console.log("Commands interrupted by obstacles:", line);
+          obstacleEncountered = false; 
+        }
+      }
+    }
+  } catch (error) {
+    console.log("Error loading file:", error);
+  }
+}
+
+function mapCommands(commandString) {
+  const commandMap = {
+    'F': 'F',
+    'B': 'B',
+    'L': 'L',
+    'R': 'R'
+  };
+
+  return Array.from(commandString).map(command => commandMap[command]).filter(Boolean);
+}
+
+function executeCommand(command, isLastCommand) {
+  switch (command) {
+    case 'F':
+    case 'B':
+      moveRover(command);
+      break;
+    case 'L':
+    case 'R':
+      rotateRover(command);
+      break;
+  }
+  if (isLastCommand) {
+    updatePositionOutput();
+  }
+}
+
 function moveRover(direction) {
+  console.log('Moving rover:', direction);
   const rover = document.querySelector('.rover');
   if (!rover) {
     return;
   }
 
-  const currentPosition = rover.parentElement;
   const nextPosition = getNextPosition(currentPosition, direction);
 
   if (nextPosition) {
-    currentPosition.removeChild(rover);
-    nextPosition.appendChild(rover);
+    obstacleEncountered = nextPosition.classList.contains('obstacle');
+    if (!obstacleEncountered) {
+      currentPosition.removeChild(rover);
+      nextPosition.appendChild(rover);
+
+      currentPosition = nextPosition;
+      const positionString = getPositionString(nextPosition);
+      positionList.push(positionString);
+    } else {
+      console.log('OBSTACLE MOVE ROVER');
+      obstacleCommands.push(direction);
+    }
+  }
+
+  return obstacleEncountered;
+}
+
+
+function getPositionString(position) {
+  const gridRows = Array.from(position.parentElement.parentElement.children);
+  const rowIndex = gridRows.indexOf(position.parentElement);
+  const colIndex = Array.from(position.parentElement.children).indexOf(position);
+
+  const numCols = gridRows[0].children.length;
+  const numRows = gridRows.length;
+
+  const adjustedColIndex = colIndex;
+  const adjustedRowIndex = numRows - rowIndex - 1;
+
+  let positionString = `${adjustedColIndex}:${adjustedRowIndex}:${currentDirection}`;
+
+  if (obstacleEncountered) {
+    console.log('OBSTACLE STRING')
+    positionString = 'O:' + positionString;
+  }
+
+  return positionString;
+}
+
+function updatePositionOutput() {
+  const positionOutput = document.getElementById('position-output');
+  if (positionOutput) {
+    positionOutput.innerHTML = "";
+
+    finalPositions.forEach((position) => {
+      const listItem = document.createElement('li');
+      listItem.textContent = position;
+      positionOutput.appendChild(listItem);
+    });
   }
 }
 
 function rotateRover(rotation) {
+  console.log('Rotating rover:', rotation);
   const rover = document.querySelector('.rover');
   if (!rover) {
     return;
@@ -52,18 +197,7 @@ function rotateRover(rotation) {
   rover.className = `fa-regular ${iconClass} rover`;
 }
 
-function getIconClassForDirection(direction) {
-  const directionMap = {
-    'N': 'fa-square-caret-up',
-    'E': 'fa-square-caret-right',
-    'S': 'fa-square-caret-down',
-    'W': 'fa-square-caret-left'
-  };
-
-  return directionMap[direction];
-}
-
-function getNextPosition(currentPosition, direction) {
+function getNextPosition(currentPosition, direction, isBlocked) {
   const row = currentPosition.parentElement;
   const rowIndex = Array.from(row.parentElement.children).indexOf(row);
   const colIndex = Array.from(row.children).indexOf(currentPosition);
@@ -73,7 +207,7 @@ function getNextPosition(currentPosition, direction) {
   let nextRowIndex = rowIndex;
   let nextColIndex = colIndex;
 
-  if (direction === 'ARROWUP' || direction === 'F') {
+  if (direction === 'F') {
     if (currentDirection === 'N') {
       nextRowIndex--;
       if (nextRowIndex < 0) {
@@ -95,7 +229,7 @@ function getNextPosition(currentPosition, direction) {
         nextColIndex = gridCols.length - 1;
       }
     }
-  } else if (direction === 'ARROWDOWN' || direction === 'B') {
+  } else if (direction === 'B') {
     if (currentDirection === 'N') {
       nextRowIndex++;
       if (nextRowIndex >= gridRows.length) {
@@ -103,7 +237,7 @@ function getNextPosition(currentPosition, direction) {
       }
     } else if (currentDirection === 'E') {
       nextColIndex--;
-      if (      nextColIndex < 0) {
+      if (nextColIndex < 0) {
         nextColIndex = gridCols.length - 1;
       }
     } else if (currentDirection === 'S') {
@@ -120,28 +254,33 @@ function getNextPosition(currentPosition, direction) {
   }
 
   const nextRow = gridRows[nextRowIndex];
-  if (nextRow) {
-    const nextCell = nextRow.children[nextColIndex];
-    if (!nextCell.classList.contains('obstacle')) {
-      return nextCell;
-    }
+  const nextPosition = nextRow ? gridRows[nextRowIndex].children[nextColIndex] : null;
+
+  if (nextPosition && isBlocked) {
+    console.log('OBSTACLE NEXT POSITION.');
+    return null;
   }
 
-  return null;
+  return nextPosition;
 }
 
-document.addEventListener("keydown", function(event) {
-  event.preventDefault();
-  const key = event.key.toUpperCase();
-
-  if (key === 'ARROWUP' || key === 'F') {
-    moveRover(key);
-  } else if (key === 'ARROWDOWN' || key === 'B') {
-    moveRover(key);
-  } else if (key === 'L') {
-    rotateRover('L');
-  } else if (key === 'R') {
-    rotateRover('R');
+function getIconClassForDirection(direction) {
+  switch (direction) {
+    case 'N':
+      return 'fa-square-caret-up';
+    case 'E':
+      return 'fa-square-caret-right';
+    case 'S':
+      return 'fa-square-caret-down';
+    case 'W':
+      return 'fa-square-caret-left';
+    default:
+      return '';
   }
-});
+}
+
+function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 
