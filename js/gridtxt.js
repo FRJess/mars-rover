@@ -1,17 +1,18 @@
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", () => {
   const loadButton = document.getElementById("loadButton");
   loadButton.addEventListener("click", loadGridData);
 });
 
-function loadGridData() {
+async function loadGridData() {
   const filePath = "input.txt";
-  fetch(filePath)
-    .then(response => response.text())
-    .then(fileContent => {
-      console.log("Contenuto del file:", fileContent);
-      parseGridData(fileContent);
-    })
-    .catch(error => console.log("Errore durante il caricamento del file:", error));
+  try {
+    const response = await fetch(filePath);
+    const fileContent = await response.text();
+    console.log("Contenuto del file:", fileContent);
+    parseGridData(fileContent);
+  } catch (error) {
+    console.log("Errore durante il caricamento del file:", error);
+  }
 }
 
 function parseGridData(fileContent) {
@@ -25,31 +26,25 @@ function parseGridData(fileContent) {
       const match = line.match(/(\w+)\s+(\d+)\s+(\d+)/);
 
       if (match) {
-        const key = match[1];
-        const numCols = parseInt(match[2], 10);
-        const numRows = parseInt(match[3], 10);
+        const [, key, numCols, numRows] = match;
+        const obstacles = lines
+          .filter(line => line.trim().startsWith("Obstacle"))
+          .map(line => {
+            const [, , obstacleX, obstacleY] = line.match(/(\w+)\s+(\d+)\s+(\d+)/);
+            return { x: parseInt(obstacleX, 10), y: parseInt(obstacleY, 10) };
+          });
 
         if (key === "Size") {
-          gridData.numCols = numCols;
-          gridData.numRows = numRows;
+          gridData.numCols = parseInt(numCols, 10);
+          gridData.numRows = parseInt(numRows, 10);
           console.log("NumCols:", gridData.numCols);
           console.log("NumRows:", gridData.numRows);
         } else if (key === "Obstacle") {
-          gridData.obstacles = gridData.obstacles || [];
-          const obstacleX = parseInt(match[2], 10);
-          const obstacleY = parseInt(match[3], 10);
-
-          if (obstacleX === 0 && obstacleY === 0) {
-            console.log("Errore: L'ostacolo non può essere posizionato nella casella in basso a sinistra.");
-            continue;
-          }
-
-          if (gridData.obstacles.length >= (gridData.numCols * gridData.numRows) / 2) {
+          if (obstacles.length >= (gridData.numCols * gridData.numRows) / 2) {
             console.log("Errore: Gli ostacoli non possono essere più della metà delle caselle totali.");
             continue;
           }
-
-          gridData.obstacles.push({ x: obstacleX, y: obstacleY });
+          gridData.obstacles = obstacles;
         }
       }
     }
@@ -57,6 +52,7 @@ function parseGridData(fileContent) {
 
   createGrid(gridData);
 }
+
 
 
 function createGrid(gridData) {
@@ -77,8 +73,7 @@ function createGrid(gridData) {
     for (let j = 0; j < numCols; j++) {
       const cell = document.createElement('div');
       cell.classList.add('jt-cell');
-      cell.style.width = `${cellWidth}px`;
-      cell.style.height = `${cellWidth}px`;
+      cell.style.cssText = `width: ${cellWidth}px; height: ${cellWidth}px;`;
 
       const isObstacle = gridData.obstacles.some(obstacle => obstacle.x === j && obstacle.y === i);
       if (isObstacle) {
