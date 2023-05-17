@@ -8,7 +8,7 @@ function placeRover(gridContainer) {
   const rover = document.createElement('i');
   rover.classList.add('fa-regular', 'fa-square-caret-up', 'rover');
 
-  function checkGridReady() {
+  const checkGridReady = () => {
     const startPosition = gridContainer.querySelector('.jt-row:last-child .jt-cell:first-child');
 
     if (startPosition) {
@@ -24,27 +24,18 @@ function placeRover(gridContainer) {
     } else {
       setTimeout(checkGridReady, 100);
     }
-  }
+  };
 
   checkGridReady();
 }
 
-function executeCommandSequence(commands, currentPosition) {
-  return new Promise(resolve => {
-    let currentIndex = 0;
-    const executeNextCommand = () => {
-      if (currentIndex < commands.length) {
-        const command = commands[currentIndex];
-        console.log('Command executed:', command);
-        executeCommand(command, currentIndex === commands.length - 1);
-        currentIndex++;
-        setTimeout(executeNextCommand, 2000);
-      } else {
-        resolve();
-      }
-    };
-    executeNextCommand();
-  });
+async function executeCommandSequence(commands, currentPosition) {
+  await commands.reduce(async (promise, command, currentIndex) => {
+    await promise;
+    console.log('Command executed:', command);
+    executeCommand(command, currentIndex === commands.length - 1);
+    await delay(2000);
+  }, Promise.resolve());
 }
 
 async function executeCommands() {
@@ -90,7 +81,7 @@ function mapCommands(commandString) {
     'R': 'R'
   };
 
-  return commandString.split('').map(command => commandMap[command]).filter(Boolean);
+  return Array.from(commandString).map(command => commandMap[command]).filter(Boolean);
 }
 
 function executeCommand(command, isLastCommand) {
@@ -136,8 +127,8 @@ function moveRover(direction) {
   }
 }
 
-//TO FIX: O IF OBSTACLE
 function getPositionString(position, isBlocked) {
+  console.log('Is blocked:', isBlocked);
   const gridRows = Array.from(position.parentElement.parentElement.children);
   const rowIndex = gridRows.indexOf(position.parentElement);
   const colIndex = Array.from(position.parentElement.children).indexOf(position);
@@ -254,7 +245,7 @@ function getNextPosition(currentPosition, direction, isBlocked) {
 
   if (nextPosition && isBlocked) {
     console.log('OBSTACLE NEXT POSITION.');
-    return null; 
+    return null;
   }
 
   return nextPosition;
@@ -278,3 +269,5 @@ function getIconClassForDirection(direction) {
 function delay(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
+
+
