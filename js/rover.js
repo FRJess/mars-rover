@@ -10,25 +10,20 @@ function placeRover(gridContainer) {
   const rover = document.createElement('i');
   rover.classList.add('fa-regular', 'fa-square-caret-up', 'rover');
 
-  const checkGridReady = () => {
-    const startPosition = gridContainer.querySelector('.jt-row:last-child .jt-cell:first-child');
+  const startPosition = gridContainer.querySelector('.jt-row:last-child .jt-cell:first-child');
+  if (startPosition) {
+    startPosition.appendChild(rover);
 
-    if (startPosition) {
-      startPosition.appendChild(rover);
+    currentPosition = startPosition;
+    const positionString = getPositionString(currentPosition);
+    positionList.push(positionString);
 
-      currentPosition = startPosition;
-      const positionString = getPositionString(currentPosition);
-      positionList.push(positionString);
+    updatePositionOutput();
 
-      updatePositionOutput();
-
-      executeCommands();
-    } else {
-      setTimeout(checkGridReady, 100);
-    }
-  };
-
-  checkGridReady();
+    executeCommands();
+  } else {
+    console.log("Errore: Impossibile trovare l'elemento di partenza del rover.");
+  }
 }
 
 async function executeCommandSequence(commands, currentPosition) {
@@ -63,7 +58,7 @@ async function executeCommands() {
         commandStrings.push(line);
         await delay(lineDelay);
 
-        let obstacleEncountered = false;
+        // let obstacleEncountered = false;
         const initialPosition = currentPosition;
         await executeCommandSequence(commands, currentPosition);
 
@@ -94,7 +89,7 @@ function mapCommands(commandString) {
     'R': 'R'
   };
 
-  return Array.from(commandString).map(command => commandMap[command]).filter(Boolean);
+  return commandString.split('').map(command => commandMap[command]);
 }
 
 function executeCommand(command, isLastCommand) {
@@ -136,8 +131,6 @@ function moveRover(direction) {
       obstacleCommands.push(direction);
     }
   }
-
-  return obstacleEncountered;
 }
 
 
@@ -283,4 +276,27 @@ function delay(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+function resetRover() {
+  currentDirection = 'N';
+  currentPosition = null;
+  positionList = [];
+  commandStrings = [];
+  finalPositions = [];
+  obstacleEncountered = false;
+  obstacleCommands = [];
 
+  const rover = document.querySelector('.rover');
+  if (rover) {
+    rover.remove();
+  }
+
+  const positionOutput = document.getElementById('position-output');
+  if (positionOutput) {
+    positionOutput.innerHTML = "";
+  }
+
+  const gridContainer = document.getElementById('grid-container');
+  if (gridContainer) {
+    placeRover(gridContainer);
+  }
+}

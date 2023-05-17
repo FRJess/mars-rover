@@ -1,6 +1,5 @@
 document.addEventListener("DOMContentLoaded", function() {
-  const loadButton = document.getElementById("loadButton");
-  loadButton.addEventListener("click", loadGridData);
+  loadGridData(); // Carica il file e crea la griglia al caricamento della pagina
 });
 
 function loadGridData() {
@@ -10,8 +9,33 @@ function loadGridData() {
     .then(fileContent => {
       console.log("Contenuto del file:", fileContent);
       parseGridData(fileContent);
+      resetRoverData(); // Aggiungi questa linea
+      placeRover(document.getElementById('grid-container'));
     })
     .catch(error => console.log("Errore durante il caricamento del file:", error));
+}
+
+function resetRoverData() {
+  currentDirection = 'N';
+  currentPosition = null;
+  positionList = [];
+  commandStrings = [];
+  finalPositions = [];
+  obstacleEncountered = false;
+  obstacleCommands = [];
+  resetPositionOutput();
+
+  const rover = document.querySelector('.rover');
+  if (rover) {
+    rover.remove();
+  }
+}
+
+function resetPositionOutput() {
+  const positionOutput = document.getElementById('position-output');
+  if (positionOutput) {
+    positionOutput.innerHTML = "";
+  }
 }
 
 function parseGridData(fileContent) {
@@ -40,16 +64,23 @@ function parseGridData(fileContent) {
           const obstacleY = parseInt(match[3], 10);
 
           if (obstacleX === 0 && obstacleY === 0) {
-            console.log("Errore: L'ostacolo non può essere posizionato nella casella in basso a sinistra.");
+            console.log("Errore: L'ostacolo non può essere posizionato nella casella in basso a sinistra perché è la casella di partenza del rover.");
             continue;
           }
 
-          if (gridData.obstacles.length >= (gridData.numCols * gridData.numRows) / 2) {
-            console.log("Errore: Gli ostacoli non possono essere più della metà delle caselle totali.");
-            continue;
+          if (
+            obstacleX >= 0 && obstacleX < gridData.numCols &&
+            obstacleY >= 0 && obstacleY < gridData.numRows
+          ) {
+             if (gridData.obstacles.length >= (gridData.numCols * gridData.numRows) / 2) {
+              console.log("Errore: Gli ostacoli non possono essere più della metà delle caselle totali.");
+              continue;
+            }
+            
+            gridData.obstacles.push({ x: obstacleX, y: obstacleY });
+          } else {
+            console.log("Errore: Le coordinate dell'ostacolo sono al di fuori dei limiti della griglia.");
           }
-
-          gridData.obstacles.push({ x: obstacleX, y: obstacleY });
         }
       }
     }
@@ -57,7 +88,6 @@ function parseGridData(fileContent) {
 
   createGrid(gridData);
 }
-
 
 function createGrid(gridData) {
   const gridContainer = document.getElementById('grid-container');
