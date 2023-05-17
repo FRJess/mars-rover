@@ -7,7 +7,6 @@ function loadGridData() {
   fetch(filePath)
     .then(response => response.text())
     .then(fileContent => {
-      console.log("Contenuto del file:", fileContent);
       parseGridData(fileContent);
     })
     .catch(error => console.log("Errore durante il caricamento del file:", error));
@@ -31,8 +30,6 @@ function parseGridData(fileContent) {
         if (key === "Size") {
           gridData.numCols = numCols;
           gridData.numRows = numRows;
-          console.log("NumCols:", gridData.numCols);
-          console.log("NumRows:", gridData.numRows);
         } else if (key === "Obstacle") {
           gridData.obstacles = gridData.obstacles || [];
           const obstacleX = parseInt(match[2], 10);

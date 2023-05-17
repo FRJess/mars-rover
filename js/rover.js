@@ -29,14 +29,13 @@ function placeRover(gridContainer) {
 async function executeCommandSequence(commands, currentPosition) {
   await commands.reduce(async (promise, command, currentIndex) => {
     await promise;
-    console.log('Command executed:', command);
     executeCommand(command, currentIndex === commands.length - 1);
     await delay(2000);
   }, Promise.resolve());
 }
 
 async function executeCommands() {
-  const filePath = "input.txt"; // Aggiungi il percorso del file
+  const filePath = "input.txt";
   const lineDelay = 3000;
 
   try {
@@ -67,10 +66,8 @@ async function executeCommands() {
         updatePositionOutput();
 
         if (initialPosition === currentPosition) {
-          console.log("Obstacle encountered:", commands.join(", "));
           obstacleEncountered = true;
         } else if (obstacleEncountered) {
-          console.log("Commands interrupted by obstacles:", line);
           obstacleEncountered = false; 
         }
       }
@@ -108,7 +105,6 @@ function executeCommand(command, isLastCommand) {
 }
 
 function moveRover(direction) {
-  console.log('Moving rover:', direction);
   const rover = document.querySelector('.rover');
   if (!rover) {
     return;
@@ -126,7 +122,6 @@ function moveRover(direction) {
       const positionString = getPositionString(nextPosition);
       positionList.push(positionString);
     } else {
-      console.log('OBSTACLE MOVE ROVER');
       obstacleCommands.push(direction);
     }
   }
@@ -146,7 +141,6 @@ function getPositionString(position) {
   let positionString = `${adjustedColIndex}:${adjustedRowIndex}:${currentDirection}`;
 
   if (obstacleEncountered) {
-    console.log('OBSTACLE STRING')
     positionString = 'O:' + positionString;
   }
 
@@ -168,7 +162,6 @@ function updatePositionOutput() {
 }
 
 function rotateRover(rotation) {
-  console.log('Rotating rover:', rotation);
   const rover = document.querySelector('.rover');
   if (!rover) {
     return;
@@ -249,7 +242,6 @@ function getNextPosition(currentPosition, direction, isBlocked) {
   const nextPosition = nextRow ? gridRows[nextRowIndex].children[nextColIndex] : null;
 
   if (nextPosition && isBlocked) {
-    console.log('OBSTACLE NEXT POSITION.');
     return null;
   }
 
