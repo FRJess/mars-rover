@@ -3,6 +3,8 @@ let currentPosition;
 let positionList = [];
 let commandStrings = [];
 let finalPositions = [];
+let obstacleEncountered = false;
+let obstacleCommands = [];
 
 function placeRover(gridContainer) {
   const rover = document.createElement('i');
@@ -61,11 +63,22 @@ async function executeCommands() {
         commandStrings.push(line);
         await delay(lineDelay);
 
+        let obstacleEncountered = false;
+        const initialPosition = currentPosition;
         await executeCommandSequence(commands, currentPosition);
 
-        finalPositions.push(getPositionString(currentPosition));
+        const positionString = getPositionString(currentPosition);
+        finalPositions.push(positionString);
 
         updatePositionOutput();
+
+        if (initialPosition === currentPosition) {
+          console.log("Obstacle encountered:", commands.join(", "));
+          obstacleEncountered = true;
+        } else if (obstacleEncountered) {
+          console.log("Commands interrupted by obstacles:", line);
+          obstacleEncountered = false; 
+        }
       }
     }
   } catch (error) {
@@ -106,29 +119,29 @@ function moveRover(direction) {
   if (!rover) {
     return;
   }
-  let isBlocked = false;
 
-  const nextPosition = getNextPosition(currentPosition, direction, isBlocked);
+  const nextPosition = getNextPosition(currentPosition, direction);
 
   if (nextPosition) {
-    isBlocked = nextPosition.classList.contains('obstacle');
-    if (!isBlocked) {
+    obstacleEncountered = nextPosition.classList.contains('obstacle');
+    if (!obstacleEncountered) {
       currentPosition.removeChild(rover);
       nextPosition.appendChild(rover);
 
       currentPosition = nextPosition;
-      const positionString = getPositionString(nextPosition, isBlocked);
+      const positionString = getPositionString(nextPosition);
       positionList.push(positionString);
+    } else {
+      console.log('OBSTACLE MOVE ROVER');
+      obstacleCommands.push(direction);
     }
   }
 
-  if (isBlocked) {
-    console.log('OBSTACLE MOVE ROVER');
-  }
+  return obstacleEncountered;
 }
 
-function getPositionString(position, isBlocked) {
-  console.log('Is blocked:', isBlocked);
+
+function getPositionString(position) {
   const gridRows = Array.from(position.parentElement.parentElement.children);
   const rowIndex = gridRows.indexOf(position.parentElement);
   const colIndex = Array.from(position.parentElement.children).indexOf(position);
@@ -141,9 +154,9 @@ function getPositionString(position, isBlocked) {
 
   let positionString = `${adjustedColIndex}:${adjustedRowIndex}:${currentDirection}`;
 
-  if (isBlocked) {
+  if (obstacleEncountered) {
     console.log('OBSTACLE STRING')
-    positionString = 'O ' + positionString;
+    positionString = 'O:' + positionString;
   }
 
   return positionString;
