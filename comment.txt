@@ -1,2 +1,6 @@
 // File nel progetto, da sostituire con file utente
 //remove
+
+document.addEventListener("DOMContentLoaded", function() {
+  loadGridData(); // Carica il file e crea la griglia al caricamento della pagina
+});

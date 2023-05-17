@@ -1,7 +1,6 @@
 document.addEventListener("DOMContentLoaded", function() {
- loadGridData();
+  loadGridData(); // Carica il file e crea la griglia al caricamento della pagina
 });
-
 function loadGridData() {
   const filePath = "input.txt";
   fetch(filePath)

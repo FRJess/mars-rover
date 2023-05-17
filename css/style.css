@@ -38,3 +38,13 @@ ul {
   list-style: none;
   line-height: 30px;
 }
+
+#position-output {
+  display: flex;
+  align-items: center;
+}
+
+#position-output li {
+  width: 500px;
+  padding: 10px;
+}

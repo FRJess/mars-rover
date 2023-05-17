@@ -58,7 +58,6 @@ async function executeCommands() {
         commandStrings.push(line);
         await delay(lineDelay);
 
-        // let obstacleEncountered = false;
         const initialPosition = currentPosition;
         await executeCommandSequence(commands, currentPosition);
 
@@ -133,7 +132,6 @@ function moveRover(direction) {
   }
 }
 
-
 function getPositionString(position) {
   const gridRows = Array.from(position.parentElement.parentElement.children);
   const rowIndex = gridRows.indexOf(position.parentElement);
@@ -160,9 +158,10 @@ function updatePositionOutput() {
   if (positionOutput) {
     positionOutput.innerHTML = "";
 
-    finalPositions.forEach((position) => {
+    finalPositions.forEach((position, index) => {
       const listItem = document.createElement('li');
-      listItem.textContent = position;
+      listItem.classList.add('list-group-item', 'list-group-item-secondary');
+      listItem.textContent = `Posizione ${index + 1}: ${position}`;
       positionOutput.appendChild(listItem);
     });
   }
@@ -274,29 +273,4 @@ function getIconClassForDirection(direction) {
 
 function delay(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-function resetRover() {
-  currentDirection = 'N';
-  currentPosition = null;
-  positionList = [];
-  commandStrings = [];
-  finalPositions = [];
-  obstacleEncountered = false;
-  obstacleCommands = [];
-
-  const rover = document.querySelector('.rover');
-  if (rover) {
-    rover.remove();
-  }
-
-  const positionOutput = document.getElementById('position-output');
-  if (positionOutput) {
-    positionOutput.innerHTML = "";
-  }
-
-  const gridContainer = document.getElementById('grid-container');
-  if (gridContainer) {
-    placeRover(gridContainer);
-  }
 }
